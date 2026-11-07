@@ -185,7 +185,7 @@ Script dùng browser context mới, không chèn dữ liệu, và ghi ảnh toà
 
 ## Triển khai GitHub Pages
 
-Repository riêng tư: https://github.com/HoangPham1220/resolve. GitHub đã xác minh quyền truy cập và tạo repository. Gói tài khoản hiện tại không hỗ trợ GitHub Pages cho repository riêng tư (API trả HTTP 422). CI vẫn chạy kiểm thử và build; deployment chỉ bật khi repository variable `ENABLE_PAGES` có giá trị `true`. Chưa có URL Pages công khai. Không cần GitHub CLI để chạy workflow.
+Repository công khai: https://github.com/HoangPham1220/resolve. GitHub Pages đã bật ở chế độ GitHub Actions với repository variable `ENABLE_PAGES=true`. Địa chỉ website: https://hoangpham1220.github.io/resolve/. Mỗi lần push nhánh `main`, workflow kiểm thử và build trước khi triển khai. Không cần GitHub CLI để chạy workflow.
 
 Khi có quyền truy cập:
 
