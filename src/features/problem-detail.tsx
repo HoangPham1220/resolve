@@ -5,7 +5,6 @@ import {
   ArrowUpRight,
   Archive,
   CheckCircle2,
-  Lightbulb,
   Plus,
   Pencil,
   RotateCcw,
@@ -62,11 +61,9 @@ export function ProblemDetail({ snapshot }: { snapshot: Snapshot }) {
       </Link>
       <div className="page-heading detail-heading">
         <div>
-          <div className="eyebrow">
-            {p.category} <span> / </span> VẤN ĐỀ
-          </div>
           <h1>{p.title}</h1>
           <div className="inline-meta">
+            <span>{p.category}</span>
             <span className={`badge ${p.status}`}>
               {statusLabels[p.status]}
             </span>
@@ -97,7 +94,7 @@ export function ProblemDetail({ snapshot }: { snapshot: Snapshot }) {
           ["plan", "Kế hoạch"],
           ["diagram", "Sơ đồ"],
           ["review", "Đánh giá"],
-          ["activity", "Hoạt động"],
+          ["activity", "Lịch sử"],
         ].map(([value, label]) => (
           <NavLink
             key={value}
@@ -111,18 +108,14 @@ export function ProblemDetail({ snapshot }: { snapshot: Snapshot }) {
       {tab === "overview" && (
         <div className="detail-grid">
           <section className="panel">
-            <div className="section-label">01 / VẤN ĐỀ</div>
-            <h2>Điều cần thay đổi</h2>
+            <h2>Mô tả</h2>
             <p className="prose">
-              {p.description ||
-                "Chưa có mô tả. Chỉnh sửa vấn đề để bổ sung bối cảnh."}
+              {p.description || "Chưa có mô tả."}
             </p>
             <div className="separator" />
-            <div className="section-label">02 / ĐÍCH ĐẾN</div>
             <h2>Kết quả mong muốn</h2>
             <p className="prose">
-              {p.outcome ||
-                "Bạn muốn điều gì khác đi khi vấn đề được giải quyết?"}
+              {p.outcome || "Chưa xác định."}
             </p>
             <Button asChild variant="outline">
               <Link to={`/problems/${p.id}/analysis`}>
@@ -131,7 +124,7 @@ export function ProblemDetail({ snapshot }: { snapshot: Snapshot }) {
             </Button>
           </section>
           <section className="panel">
-            <h2>Hành trình giải quyết</h2>
+            <h2>Tiến độ</h2>
             <div className="big-progress">
               {progress(tasks)}
               <span>%</span>
@@ -178,16 +171,7 @@ export function ProblemDetail({ snapshot }: { snapshot: Snapshot }) {
       )}
       {tab === "analysis" && (
         <section className="panel">
-          <div className="section-intro">
-            <Lightbulb size={21} />
-            <div>
-              <h2>Hiểu rõ trước khi hành động</h2>
-              <p className="muted">
-                Tách triệu chứng khỏi nguyên nhân. Hãy thử hỏi “Tại sao?” nhiều
-                lần.
-              </p>
-            </div>
-          </div>
+          <h2>Phân tích</h2>
           <form
             key={p.id + "analysis" + p.updatedAt}
             className="form-stack"
@@ -204,25 +188,25 @@ export function ProblemDetail({ snapshot }: { snapshot: Snapshot }) {
             }}
           >
             <label>
-              Nguyên nhân gốc rễ
+              Nguyên nhân
               <textarea
                 name="causes"
                 rows={5}
                 maxLength={10000}
                 defaultValue={p.causes}
                 disabled={readOnly}
-                placeholder="Điều gì thực sự dẫn đến vấn đề này?"
+                placeholder="Nguyên nhân gây ra vấn đề"
               />
             </label>
             <label>
-              Tác động hiện tại
+              Tác động
               <textarea
                 name="impact"
                 rows={3}
                 maxLength={10000}
                 defaultValue={p.impact}
                 disabled={readOnly}
-                placeholder="Vấn đề ảnh hưởng đến thời gian, công việc, cảm xúc… như thế nào?"
+                placeholder="Ảnh hưởng của vấn đề"
               />
             </label>
             <label>
@@ -233,7 +217,7 @@ export function ProblemDetail({ snapshot }: { snapshot: Snapshot }) {
                 maxLength={10000}
                 defaultValue={p.outcome}
                 disabled={readOnly}
-                placeholder="Một kết quả cụ thể, quan sát và đo lường được"
+                placeholder="Kết quả cần đạt"
               />
             </label>
             {!readOnly && (
@@ -247,10 +231,7 @@ export function ProblemDetail({ snapshot }: { snapshot: Snapshot }) {
       {tab === "plan" && (
         <>
           <div className="section-heading">
-            <div>
-              <h2>Từ phương án đến hành động</h2>
-              <p className="muted">Chia nhỏ để mỗi bước đều có thể bắt đầu.</p>
-            </div>
+            <h2>Phương án</h2>
             {!readOnly && p.status !== "resolved" && (
               <Button onClick={() => setAddingPlan(true)}>
                 <Plus size={16} /> Thêm phương án
@@ -259,18 +240,13 @@ export function ProblemDetail({ snapshot }: { snapshot: Snapshot }) {
           </div>
           {plans.length === 0 ? (
             <div className="empty-state panel">
-              <Lightbulb size={32} />
-              <h2>Chọn một hướng giải quyết</h2>
-              <p>Thêm phương án đầu tiên, rồi chia thành các công việc nhỏ.</p>
+              <p>Chưa có phương án.</p>
             </div>
           ) : (
-            plans.map((plan, i) => (
+            plans.map((plan) => (
               <section className="panel plan-panel" key={plan.id}>
                 <div className="section-heading">
                   <div>
-                    <div className="section-label">
-                      PHƯƠNG ÁN {String(i + 1).padStart(2, "0")}
-                    </div>
                     <h2>{plan.title}</h2>
                     <p className="prose muted">{plan.description}</p>
                   </div>
@@ -308,7 +284,7 @@ export function ProblemDetail({ snapshot }: { snapshot: Snapshot }) {
                   ))}
                 {!tasks.some((t) => t.planId === plan.id) && (
                   <p className="muted">
-                    Chưa có công việc. Thêm một bước cụ thể để bắt đầu.
+                    Chưa có công việc.
                   </p>
                 )}
               </section>
@@ -318,19 +294,13 @@ export function ProblemDetail({ snapshot }: { snapshot: Snapshot }) {
       )}
       {tab === "diagram" && (
         <section className="panel">
-          <h2>Bức tranh tổng thể</h2>
-          <p className="muted">Mỗi hành động đều có một mục đích.</p>
+          <h2>Sơ đồ</h2>
           <Diagram id={p.id} snapshot={snapshot} />
         </section>
       )}
       {tab === "review" && (
         <section className="panel">
-          <div className="section-label">KHÉP LẠI VÒNG LẶP</div>
-          <h2>Hoàn thành công việc ≠ giải quyết vấn đề</h2>
-          <p className="muted">
-            So sánh kết quả thực tế với điều bạn kỳ vọng. Ghi lại điều hữu ích
-            cho lần sau.
-          </p>
+          <h2>Đánh giá</h2>
           <form
             key={p.id + "review" + p.updatedAt}
             className="form-stack"
@@ -352,7 +322,7 @@ export function ProblemDetail({ snapshot }: { snapshot: Snapshot }) {
           >
             <div className="callout">
               Kết quả mong muốn:{" "}
-              {p.outcome || "Chưa xác định — bổ sung ở tab Phân tích."}
+              {p.outcome || "Chưa xác định."}
             </div>
             <label>
               Kết quả thực tế
@@ -362,7 +332,7 @@ export function ProblemDetail({ snapshot }: { snapshot: Snapshot }) {
                 maxLength={10000}
                 defaultValue={p.review}
                 disabled={readOnly}
-                placeholder="Điều gì đã thay đổi? Có bằng chứng nào cho thấy vấn đề được giải quyết?"
+                placeholder="Kết quả đạt được"
               />
             </label>
             <label>
@@ -373,7 +343,7 @@ export function ProblemDetail({ snapshot }: { snapshot: Snapshot }) {
                 maxLength={10000}
                 defaultValue={p.lessons}
                 disabled={readOnly}
-                placeholder="Điều gì hiệu quả? Bạn sẽ làm khác điều gì?"
+                placeholder="Bài học cho lần sau"
               />
             </label>
             {!readOnly && (
@@ -393,7 +363,7 @@ export function ProblemDetail({ snapshot }: { snapshot: Snapshot }) {
       )}
       {tab === "activity" && (
         <section className="panel">
-          <h2>Lịch sử giải quyết</h2>
+          <h2>Lịch sử</h2>
           <div className="activity-list">
             {snapshot.activities
               .filter((a) => a.problemId === p.id)
@@ -446,8 +416,8 @@ export function ProblemDetail({ snapshot }: { snapshot: Snapshot }) {
         <Dialog
           open
           onOpenChange={(v) => !v && setAddingPlan(false)}
-          title="Thêm phương án giải quyết"
-          description="Một hướng đi rõ ràng để đạt kết quả mong muốn."
+          title="Thêm phương án"
+          description="Nhập tên và cách thực hiện."
         >
           <form
             className="form-stack"
@@ -471,7 +441,7 @@ export function ProblemDetail({ snapshot }: { snapshot: Snapshot }) {
                 required
                 minLength={3}
                 maxLength={160}
-                placeholder="Bạn sẽ giải quyết bằng cách nào?"
+                placeholder="Tên phương án"
               />
             </label>
             <label>

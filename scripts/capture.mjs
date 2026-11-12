@@ -10,7 +10,7 @@ for (const [name, viewport] of [
   const page = await context.newPage();
   await page.goto("http://127.0.0.1:4173");
   await page
-    .getByRole("button", { name: "Ghi nhận vấn đề đầu tiên" })
+    .getByRole("button", { name: "Tạo vấn đề", exact: true })
     .waitFor();
   await page.screenshot({
     path: `docs/screenshots/${name}.png`,

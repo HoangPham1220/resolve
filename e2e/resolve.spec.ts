@@ -1,7 +1,7 @@
 import { test, expect, type Page } from "@playwright/test";
 async function createProblem(page: Page) {
   await page.goto("/");
-  await page.getByRole("button", { name: "Ghi nhận vấn đề đầu tiên" }).click();
+  await page.getByRole("button", { name: "Tạo vấn đề" }).click();
   await page.getByLabel("Tên vấn đề").fill("Cải thiện sự tập trung");
   await page
     .getByLabel("Mô tả", { exact: true })
@@ -16,15 +16,13 @@ test("complete problem lifecycle persists across reloads", async ({ page }) => {
   page.on("pageerror", (e) => errors.push(e.message));
   await createProblem(page);
   await page.getByRole("link", { name: "Phân tích", exact: true }).click();
-  await page
-    .getByLabel("Nguyên nhân gốc rễ")
-    .fill("Thông báo điện thoại quá nhiều");
-  await page.getByLabel("Tác động hiện tại").fill("Mất 2 giờ mỗi ngày");
+  await page.getByLabel("Nguyên nhân").fill("Thông báo điện thoại quá nhiều");
+  await page.getByLabel("Tác động").fill("Mất 2 giờ mỗi ngày");
   await page.getByLabel("Kết quả mong muốn").fill("Học liên tục 45 phút");
   await page.getByRole("button", { name: "Lưu phân tích" }).click();
   await expect(page.getByRole("status")).toContainText("Đã lưu");
   await page.reload();
-  await expect(page.getByLabel("Nguyên nhân gốc rễ")).toHaveValue(
+  await expect(page.getByLabel("Nguyên nhân")).toHaveValue(
     "Thông báo điện thoại quá nhiều",
   );
   await page.getByRole("link", { name: "Kế hoạch", exact: true }).click();
@@ -72,7 +70,7 @@ test("complete problem lifecycle persists across reloads", async ({ page }) => {
   await expect(page.getByLabel("Bài học rút ra")).toHaveValue(
     "Môi trường quan trọng hơn ý chí",
   );
-  await page.getByRole("link", { name: "Hoạt động", exact: true }).click();
+  await page.getByRole("link", { name: "Lịch sử", exact: true }).click();
   await expect(
     page.getByText("Đã đánh giá và giải quyết vấn đề"),
   ).toBeVisible();
@@ -91,18 +89,16 @@ test("complete problem lifecycle persists across reloads", async ({ page }) => {
 });
 test("empty state, filters, search and responsive layout", async ({ page }) => {
   await page.goto("/");
-  await expect(
-    page.getByText("Thay đổi bắt đầu từ việc gọi tên vấn đề"),
-  ).toBeVisible();
+  await expect(page.getByText("Chưa có vấn đề nào")).toBeVisible();
   await createProblem(page);
   await page.goto("/#/problems");
   await page
     .getByRole("textbox", { name: "Tìm kiếm", exact: true })
     .fill("không tồn tại");
-  await expect(page.getByText("Chưa tìm thấy vấn đề")).toBeVisible();
+  await expect(page.getByText("Chưa có vấn đề nào")).toBeVisible();
   await page.getByRole("button", { name: "Xóa tìm kiếm" }).click();
   await page.getByLabel("Lọc trạng thái").selectOption("resolved");
-  await expect(page.getByText("Chưa tìm thấy vấn đề")).toBeVisible();
+  await expect(page.getByText("Chưa có vấn đề nào")).toBeVisible();
   await page.getByLabel("Lọc trạng thái").selectOption("open");
   await expect(
     page.getByRole("heading", { name: "Cải thiện sự tập trung" }),

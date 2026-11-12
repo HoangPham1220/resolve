@@ -4,17 +4,10 @@ import {
   ArrowUpRight,
   ArrowRight,
   Plus,
-  Compass,
-  CheckCircle2,
-  Layers3,
   ListTodo,
-  Search,
   SlidersHorizontal,
-  Leaf,
-  Target,
 } from "lucide-react";
-import { format, isBefore, startOfDay } from "date-fns";
-import { vi } from "date-fns/locale";
+import { isBefore, startOfDay } from "date-fns";
 import {
   type Snapshot,
   type Problem,
@@ -38,15 +31,12 @@ function ProblemCard({
   return (
     <Link className="problem-card" to={`/problems/${p.id}`}>
       <div className="card-top">
-        <span className={`category-icon cat-${p.category}`}>
-          <Target size={18} />
-        </span>
+        <span className="card-category">{p.category}</span>
         <span className={`badge ${p.status}`}>{statusLabels[p.status]}</span>
         <ArrowUpRight size={17} className="card-arrow" />
       </div>
-      <span className="card-category">{p.category}</span>
       <h3>{p.title}</h3>
-      <p>{p.description || "Bắt đầu phân tích để tìm hướng giải quyết."}</p>
+
       <div className="card-progress-label">
         <span>Tiến độ thực hiện</span>
         <strong>{progress(tasks)}%</strong>
@@ -92,145 +82,54 @@ export function Dashboard({
   const [editing, setEditing] = useState<Task | null>(null);
   const recent = [...active]
     .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
-    .slice(0, 3);
+    .slice(0, 5);
   return (
-    <>
+    <div className="dashboard">
       <div className="page-heading">
-        <div>
-          <div className="eyebrow">
-            {format(new Date(), "EEEE, dd MMMM yyyy", { locale: vi })}
-          </div>
-          <h1>
-            Mỗi vấn đề, một bước tiến<span className="heading-dot">.</span>
-          </h1>
-          <p className="muted">
-            Làm rõ điều quan trọng. Tập trung vào bước tiếp theo.
-          </p>
-        </div>
-        <Button onClick={create}>
-          <Plus size={17} /> Vấn đề mới
-        </Button>
-      </div>
-      <section className="welcome-banner">
-        <div>
-          <span className="banner-kicker">
-            <span className="tiny-spark">✦</span> KHÔNG CHỈ LÀ MỘT DANH SÁCH
-            CÔNG VIỆC
-          </span>
-          <h2>
-            Đừng chỉ bận rộn.
-            <br />
-            Hãy giải quyết đúng vấn đề.
-          </h2>
-          <p>
-            Một không gian để hiểu rõ, hành động có chủ đích
-            <br className="desktop-only" /> và tạo ra thay đổi thực sự.
-          </p>
-          <button className="banner-link" onClick={create}>
-            Bắt đầu một hành trình <ArrowRight size={16} />
-          </button>
-        </div>
-        <div className="orbit-art" aria-hidden="true">
-          <div className="orbit orbit-one" />
-          <div className="orbit orbit-two" />
-          <div className="orbit orbit-three" />
-          <span className="orbit-label label-problem">
-            <span className="orbit-dot" />
-            Vấn đề
-          </span>
-          <span className="orbit-label label-action">
-            <CheckCircle2 size={15} />
-            Hành động
-          </span>
-          <span className="orbit-label label-result">
-            <Leaf size={15} />
-            Thay đổi
-          </span>
-          <div className="art-center">
-            <Compass size={46} strokeWidth={1.2} />
-          </div>
-          <span className="star star-one">✦</span>
-          <span className="star star-two">✧</span>
-        </div>
-      </section>
-      <div className="stats-grid">
-        {[
-          {
-            label: "Đang giải quyết",
-            value: active.filter((p) => p.status !== "resolved").length,
-            icon: Layers3,
-            note: "Vấn đề cần sự chú ý",
-            color: "green",
-          },
-          {
-            label: "Công việc cần làm",
-            value: tasks.filter((t) => t.status !== "done").length,
-            icon: ListTodo,
-            note: `${ready.length} việc có thể bắt đầu`,
-            color: "orange",
-          },
-          {
-            label: "Đã giải quyết",
-            value: active.filter((p) => p.status === "resolved").length,
-            icon: CheckCircle2,
-            note: "Những thay đổi đã tạo ra",
-            color: "blue",
-          },
-        ].map((stat) => (
-          <div className="stat-card" key={stat.label}>
-            <div>
-              <span className="stat-label">{stat.label}</span>
-              <strong>{stat.value.toString().padStart(2, "0")}</strong>
-              <small>{stat.note}</small>
-            </div>
-            <span className={`stat-icon ${stat.color}`}>
-              <stat.icon size={20} />
-            </span>
-          </div>
-        ))}
-      </div>
-      <div className="section-heading">
-        <div>
-          <h2>
-            Vấn đề gần đây <span className="count">{active.length}</span>
-          </h2>
-          <p className="muted">Bức tranh lớn phía sau những việc bạn làm.</p>
-        </div>
-        <Link className="text-link" to="/problems">
-          Xem tất cả <ArrowRight size={15} />
-        </Link>
-      </div>
-      {recent.length ? (
-        <div className="problem-grid">
-          {recent.map((p) => (
-            <ProblemCard key={p.id} problem={p} snapshot={snapshot} />
-          ))}
-        </div>
-      ) : (
-        <div className="first-problem">
-          <span className="empty-icon">
-            <Layers3 size={26} />
-          </span>
-          <div>
-            <h3>Thay đổi bắt đầu từ việc gọi tên vấn đề</h3>
-            <p>Ghi lại điều đang cản trở bạn. Không cần có ngay câu trả lời.</p>
-          </div>
-          <Button variant="outline" onClick={create}>
-            <Plus size={16} /> Ghi nhận vấn đề đầu tiên
+        <h1>Tổng quan</h1>
+        {active.length > 0 && (
+          <Button onClick={create}>
+            <Plus size={16} /> Tạo vấn đề
           </Button>
-        </div>
+        )}
+      </div>
+      {active.length > 0 && (
+        <p className="muted" aria-label="Thống kê vấn đề">
+          {active.length} vấn đề ·{" "}
+          {active.filter((p) => p.status === "in_progress").length} đang xử lý ·{" "}
+          {active.filter((p) => p.status === "resolved").length} đã giải quyết
+        </p>
       )}
-      <div className="dashboard-bottom">
-        <section className="panel next-panel">
-          <div className="section-heading">
-            <div>
-              <h2>Bước tiếp theo</h2>
-              <p className="muted">Những hành động sẵn sàng để bắt đầu.</p>
-            </div>
-            <Link to="/tasks" className="text-link">
-              Tất cả <ArrowUpRight size={15} />
-            </Link>
+      <section className="dashboard-section">
+        <div className="section-heading">
+          <h2>Vấn đề</h2>
+          <Link className="text-link" to="/problems">
+            Tất cả <ArrowRight size={15} />
+          </Link>
+        </div>
+        {recent.length ? (
+          <div className="problem-grid">
+            {recent.map((p) => (
+              <ProblemCard key={p.id} problem={p} snapshot={snapshot} />
+            ))}
           </div>
+        ) : (
+          <div className="dashboard-empty">
+            <span>Chưa có vấn đề nào</span>
+            <Button onClick={create}>
+              <Plus size={16} /> Tạo vấn đề
+            </Button>
+          </div>
+        )}
+      </section>
+      <section className="dashboard-section">
+        <div className="section-heading">
+          <h2>Công việc tiếp theo</h2>
+          <Link to="/tasks" className="text-link">
+            Tất cả <ArrowRight size={15} />
+          </Link>
+        </div>
+        <div className="task-list">
           {next.map((t) => (
             <TaskRow
               key={t.id}
@@ -240,35 +139,14 @@ export function Dashboard({
             />
           ))}
           {!next.length && (
-            <div className="quiet-empty">
-              <CheckCircle2 size={25} />
-              <p>
-                {tasks.some((t) => t.status !== "done")
-                  ? "Các việc còn lại đang chờ hoàn thành tiền đề."
-                  : "Một chút rõ ràng, một bước nhẹ nhàng."}
-              </p>
-              <small>
-                Thêm phương án và công việc trong mỗi vấn đề để bắt đầu.
-              </small>
+            <div className="dashboard-empty">
+              {tasks.some((t) => t.status !== "done")
+                ? "Các công việc còn lại đang chờ việc tiền đề."
+                : "Không có công việc cần làm."}
             </div>
           )}
-        </section>
-        <aside className="reflection-card">
-          <span className="section-label">MỘT CHÚT SUY NGẪM</span>
-          <span className="quote-mark">“</span>
-          <blockquote>
-            Nếu có một giờ để giải quyết vấn đề, hãy dành thời gian để hiểu nó
-            trước.
-          </blockquote>
-          <div className="reflection-line" />
-          <p>
-            Chậm lại để nhìn rõ.
-            <br />
-            Rõ ràng để tiến xa.
-          </p>
-          <Leaf size={24} className="reflection-leaf" />
-        </aside>
-      </div>
+        </div>
+      </section>
       {editing && (
         <TaskForm
           problemId={editing.problemId}
@@ -277,9 +155,10 @@ export function Dashboard({
           close={() => setEditing(null)}
         />
       )}
-    </>
+    </div>
   );
 }
+
 export function Problems({
   snapshot,
   create,
@@ -312,21 +191,10 @@ export function Problems({
   return (
     <>
       <div className="page-heading">
-        <div>
-          <div className="eyebrow">KHÔNG GIAN CỦA BẠN</div>
-          <h1>
-            {archive ? "Kho lưu trữ" : "Tất cả vấn đề"}
-            <span className="heading-dot">.</span>
-          </h1>
-          <p className="muted">
-            {archive
-              ? "Những hành trình và bài học đáng giữ lại."
-              : "Nhìn rõ vấn đề để chọn đúng hành động."}
-          </p>
-        </div>
+        <h1>{archive ? "Kho lưu trữ" : "Vấn đề"}</h1>
         {!archive && (
           <Button onClick={create}>
-            <Plus size={17} /> Vấn đề mới
+            <Plus size={17} /> Tạo vấn đề
           </Button>
         )}
       </div>
@@ -372,18 +240,15 @@ export function Problems({
         </div>
       ) : (
         <div className="panel empty-state">
-          <Search size={32} />
           <h2>
-            {archive ? "Chưa có vấn đề được lưu trữ" : "Chưa tìm thấy vấn đề"}
+            {archive ? "Chưa có vấn đề được lưu trữ" : "Chưa có vấn đề nào"}
           </h2>
-          <p>
-            {search || status !== "all" || category !== "all"
-              ? "Thử thay đổi từ khóa hoặc bộ lọc."
-              : "Mỗi vấn đề là một cơ hội để làm mọi thứ tốt hơn."}
-          </p>
+          {(search || status !== "all" || category !== "all") && (
+            <p>Thử thay đổi từ khóa hoặc bộ lọc.</p>
+          )}
           {!archive && (
             <Button onClick={create}>
-              <Plus size={16} /> Ghi nhận vấn đề
+              <Plus size={16} /> Tạo vấn đề
             </Button>
           )}
         </div>
@@ -428,15 +293,7 @@ export function Tasks({ snapshot }: { snapshot: Snapshot }) {
   return (
     <>
       <div className="page-heading">
-        <div>
-          <div className="eyebrow">TẬP TRUNG VÀO HÀNH ĐỘNG</div>
-          <h1>
-            Công việc của tôi<span className="heading-dot">.</span>
-          </h1>
-          <p className="muted">
-            Biết cần làm gì tiếp theo và vì sao điều đó quan trọng.
-          </p>
-        </div>
+        <h1>Công việc của tôi</h1>
       </div>
       <div className="tabs task-filters">
         {[
@@ -470,7 +327,6 @@ export function Tasks({ snapshot }: { snapshot: Snapshot }) {
         ))}
         {!tasks.length && (
           <div className="empty-state">
-            <ListTodo size={32} />
             <h2>Không có công việc trong mục này</h2>
             <p>Tạo công việc trong tab Kế hoạch của một vấn đề.</p>
             <Button asChild variant="outline">

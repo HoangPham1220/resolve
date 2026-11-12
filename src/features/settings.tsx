@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Download, Upload, ShieldCheck, HardDrive } from "lucide-react";
+import { Download, Upload, HardDrive } from "lucide-react";
 import { service } from "../application";
 import { errorMessage } from "../components/forms";
 import { Button } from "../components/ui/button";
@@ -31,29 +31,20 @@ export function Settings() {
     <>
       <div className="page-heading">
         <div>
-          <div className="eyebrow">DỮ LIỆU THUỘC VỀ BẠN</div>
-          <h1>
-            Cài đặt<span className="heading-dot">.</span>
-          </h1>
-          <p className="muted">
-            Một không gian cá nhân, ngay trên thiết bị của bạn.
-          </p>
+          <h1>Cài đặt</h1>
         </div>
       </div>
       <section className="panel settings-panel">
-        <ShieldCheck size={30} className="green-text" />
-        <h2>Dữ liệu riêng tư, lưu trên thiết bị</h2>
+        <h2>Dữ liệu</h2>
         <p className="prose muted">
-          Resolve lưu dữ liệu trong IndexedDB của trình duyệt này. Dữ liệu được
-          giữ sau khi tải lại trang; chưa đồng bộ giữa các thiết bị. Xóa dữ liệu
-          trình duyệt hoặc đổi địa chỉ website sẽ làm bạn mất quyền truy cập bản
-          lưu này. Hãy xuất bản sao lưu định kỳ.
+          Dữ liệu chỉ lưu trong trình duyệt này, chưa đồng bộ giữa các thiết bị.
+          Hãy sao lưu trước khi xóa dữ liệu trình duyệt hoặc chuyển sang địa chỉ khác.
         </p>
         <div className="settings-row">
           <div>
             <h3>Xuất bản sao lưu</h3>
             <p className="muted">
-              Tất cả vấn đề, phương án, công việc và lịch sử dưới dạng JSON.
+              Tải toàn bộ dữ liệu dưới dạng JSON.
             </p>
           </div>
           <Button
@@ -68,8 +59,7 @@ export function Settings() {
           <div>
             <h3>Khôi phục từ bản sao lưu</h3>
             <p className="muted">
-              Chỉ thêm dữ liệu mới. Từ chối tệp trùng ID, không ghi đè dữ liệu
-              hiện có.
+              Thêm dữ liệu từ tệp JSON. Không ghi đè dữ liệu trùng.
             </p>
           </div>
           <label
@@ -102,15 +92,15 @@ export function Settings() {
         </div>
         <div className="settings-row">
           <div>
-            <h3>Ưu tiên lưu trữ bền vững</h3>
+            <h3>Lưu trữ bền vững</h3>
             <p className="muted">
-              Yêu cầu trình duyệt hạn chế tự dọn dữ liệu khi thiếu bộ nhớ.
+              Hạn chế trình duyệt tự dọn dữ liệu khi thiếu bộ nhớ.
             </p>
             {persistent !== null && (
               <small>
                 {persistent
-                  ? "Trình duyệt đã cấp lưu trữ bền vững."
-                  : "Trình duyệt chưa cấp quyền. Hãy giữ bản sao lưu JSON."}
+                  ? "Đã bật lưu trữ bền vững."
+                  : "Chưa được cấp quyền. Hãy giữ bản sao lưu."}
               </small>
             )}
           </div>

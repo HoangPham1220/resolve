@@ -2,7 +2,7 @@ import { expect, test, type Page } from "@playwright/test";
 
 async function createProblem(page: Page) {
   await page.goto("/");
-  await page.getByRole("button", { name: "Ghi nhận vấn đề đầu tiên" }).click();
+  await page.getByRole("button", { name: "Tạo vấn đề" }).click();
   await page.getByLabel("Tên vấn đề").fill("Chủ động lập kế hoạch học tập");
   await page.getByRole("button", { name: "Tạo vấn đề", exact: true }).click();
   await expect(

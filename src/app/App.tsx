@@ -17,18 +17,12 @@ import {
 import { useLiveQuery } from "dexie-react-hooks";
 import {
   Archive,
-  ArrowUpRight,
-  Check,
-  ChevronRight,
-  Compass,
   LayoutDashboard,
   ListTodo,
   Layers3,
   Search,
   Settings as SettingsIcon,
   X,
-  Plus,
-  HardDrive,
 } from "lucide-react";
 import { repository } from "../application";
 import { Dashboard, Problems, Tasks } from "../features/workspace";
@@ -82,23 +76,12 @@ function Workspace() {
     const timer = setTimeout(() => notify(""), 6500);
     return () => clearTimeout(timer);
   }, [notice, notify]);
-  const current = nav.find((n) =>
-    n.path === "/"
-      ? location.pathname === "/"
-      : location.pathname.startsWith(n.path),
-  );
   return (
     <div className="app-shell">
       <aside className="sidebar">
         <Link to="/" className="brand">
-          <span className="brand-symbol">
-            <Compass size={25} strokeWidth={1.6} />
-          </span>
-          <span>
-            resolve<span className="brand-dot">.</span>
-          </span>
+          resolve
         </Link>
-        <span className="workspace-label">KHÔNG GIAN CÁ NHÂN</span>
         <nav className="main-nav" aria-label="Điều hướng chính">
           {nav.map((n) => (
             <NavLink key={n.path} to={n.path} end={n.path === "/"}>
@@ -116,46 +99,14 @@ function Workspace() {
             </NavLink>
           ))}
         </nav>
-        <div className="sidebar-note">
-          <span className="note-icon">✧</span>
-          <strong>
-            Rõ vấn đề.
-            <br />
-            Đúng hành động.
-          </strong>
-          <p>
-            Những thay đổi lớn bắt đầu
-            <br />
-            từ một bước nhỏ.
-          </p>
-          <button onClick={() => setCreating(true)}>
-            Ghi nhận điều cần thay đổi <ArrowUpRight size={14} />
-          </button>
-        </div>
         <div className="sidebar-bottom">
           <NavLink to="/settings" className="settings-link">
             <SettingsIcon size={18} /> Cài đặt
           </NavLink>
-          <div className="profile">
-            <span className="avatar">B</span>
-            <div>
-              <strong>Không gian của bạn</strong>
-              <small>Cá nhân · Local first</small>
-            </div>
-            <Check size={15} />
-          </div>
         </div>
       </aside>
       <div className="main-shell">
         <header className="topbar">
-          <div className="breadcrumb">
-            Không gian cá nhân <ChevronRight size={13} />
-            <span>
-              {location.pathname === "/settings"
-                ? "Cài đặt"
-                : (current?.label ?? "Vấn đề")}
-            </span>
-          </div>
           <form
             className="global-search"
             onSubmit={(e) => {
@@ -189,10 +140,10 @@ function Workspace() {
           </form>
           <Link
             to="/settings"
-            className="top-avatar"
+            className="top-settings icon-button"
             aria-label="Cài đặt cá nhân"
           >
-            B
+            <SettingsIcon size={19} />
           </Link>
         </header>
         <main>
@@ -247,15 +198,6 @@ function Workspace() {
           ) : (
             <div className="empty-state">Đang mở dữ liệu trên thiết bị…</div>
           )}
-          <footer className="page-footer">
-            <span>
-              <span className="footer-dot" /> Không gian riêng cho những bước
-              tiến của bạn.
-            </span>
-            <Link to="/settings">
-              <HardDrive size={12} /> Dữ liệu lưu trên thiết bị
-            </Link>
-          </footer>
         </main>
       </div>
       <nav className="mobile-nav" aria-label="Điều hướng mobile">
@@ -265,9 +207,6 @@ function Workspace() {
             <span>{n.label}</span>
           </NavLink>
         ))}
-        <button onClick={() => setCreating(true)} aria-label="Tạo vấn đề mới">
-          <Plus size={22} />
-        </button>
       </nav>
       {creating && <ProblemForm open close={() => setCreating(false)} />}
       {notice && (
